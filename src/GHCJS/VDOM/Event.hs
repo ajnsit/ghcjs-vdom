@@ -7,11 +7,11 @@
 
 module GHCJS.VDOM.Event ( initEventDelegation
                         , defaultEvents
---                        , target
+                        , target
                         , stopPropagation
                         , stopImmediatePropagation
                         , preventDefault
-                          
+
                           -- * mouse
                         , MouseEvent
                         , click
@@ -28,7 +28,7 @@ module GHCJS.VDOM.Event ( initEventDelegation
                         , buttons
                         , clientX
                         , clientY
-                           
+
                           -- * keyboard
                         , KeyboardEvent
                         , keydown
@@ -39,7 +39,7 @@ module GHCJS.VDOM.Event ( initEventDelegation
                         , ctrlKey
                         , metaKey
                         , shiftKey
-                          
+
                           -- * drag
                         , DragEvent
                         , drag
@@ -48,7 +48,7 @@ module GHCJS.VDOM.Event ( initEventDelegation
                         , dragleave
                         , dragover
                         , dragstart
-                          
+
                           -- * focus
                         , FocusEvent
                         , focus
@@ -60,7 +60,7 @@ module GHCJS.VDOM.Event ( initEventDelegation
                         , scroll
                         , select
                         , unload
-                          
+
                           -- * wheel
                         , WheelEvent
                         , wheel
@@ -69,11 +69,18 @@ module GHCJS.VDOM.Event ( initEventDelegation
                         , deltaY
                         , deltaZ
                         , deltaMode
-                          
+
                           -- * generic
                         , Event
                         , submit
                         , change
+
+                          -- * input
+                        , InputEvent
+                        , input
+                          --
+                        , inputValue
+
                         ) where
 
 import Data.Coerce
@@ -96,10 +103,12 @@ class Coercible a JSVal => Event_ a
 class Event_ a          => KeyModEvent_ a
 class Event_ a          => MouseEvent_ a
 class Event_ a          => FocusEvent_ a
+class Event_ a          => InputEvent_ a
 
 mkEventTypes ''Event_ [ ("MouseEvent",    [''MouseEvent_])
                       , ("KeyboardEvent", [''KeyModEvent_])
                       , ("FocusEvent",    [''FocusEvent_])
+                      , ("InputEvent",    [''InputEvent_])
                       , ("DragEvent",     [])
                       , ("WheelEvent",    [])
                       , ("UIEvent",       [])
@@ -112,6 +121,8 @@ mkEvents 'MouseEvent [ "click", "dblclick", "mousedown", "mouseenter"
                      ]
 
 mkEvents 'KeyboardEvent [ "keydown", "keypress", "keyup" ]
+
+mkEvents 'InputEvent [ "input" ]
 
 mkEvents 'DragEvent [ "drag", "dragend", "dragenter", "dragleave"
                     , "dragover", "dragstart" ]
@@ -133,9 +144,9 @@ er f x = f (coerce x)
 defaultEvents :: [JSString]
 defaultEvents = $(mkDefaultEvents)
 
-
--- target :: Event_ a => a -> VNode
--- target e = undefined
+target :: Event_ a => a -> JSVal
+target = er $ \e -> [jsu'| `e.target |]
+{-# INLINE target #-}
 
 stopPropagation :: Event_ a => a -> IO ()
 stopPropagation = er $ \e -> [jsu_| `e.stopPropagation(); |]
@@ -196,3 +207,7 @@ clientX = er $ \e -> [jsu'| `e.clientX|0 |]
 clientY :: MouseEvent -> Int
 clientY = er $ \e -> [jsu'| `e.clientY|0 |]
 {-# INLINE clientY #-}
+
+inputValue :: InputEvent -> JSString
+inputValue = er $ \e -> [jsu'| String(`e.target.value||'') |]
+{-# INLINE inputValue #-}
