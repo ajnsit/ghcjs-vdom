@@ -208,6 +208,6 @@ clientY :: MouseEvent -> Int
 clientY = er $ \e -> [jsu'| `e.clientY|0 |]
 {-# INLINE clientY #-}
 
-inputValue :: InputEvent -> JSString
+inputValue :: Event_ a => a -> JSString
 inputValue = er $ \e -> [jsu'| String(`e.target.value||'') |]
 {-# INLINE inputValue #-}
