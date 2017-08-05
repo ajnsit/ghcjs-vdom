@@ -18,6 +18,7 @@ module GHCJS.VDOM.Attribute ( Attribute
                             , height
                             , title
                             , lang
+                            , style
                             , type_
                             , key -- virtual-dom identifiers
                             ) where
@@ -32,6 +33,7 @@ import GHCJS.VDOM.Internal
 mkAttrs ''JSString [ "id", "href", "src", "alt", "title"
                    , "lang", "name", "target", "value"
                    , "checked", "placeholder", "autofocus"
+                   , "style"
                    ]
 
 mkAttrs' ''JSString [ ("class_", "className")
