@@ -21,6 +21,10 @@ module GHCJS.VDOM.Attribute ( Attribute
                             , style
                             , type_
                             , key -- virtual-dom identifiers
+                            , pattern_
+                            , colspan
+                            , rowspan
+                            , maxlength
                             ) where
 
 import Prelude hiding (id)
@@ -38,6 +42,7 @@ mkAttrs ''JSString [ "id", "href", "src", "alt", "title"
 
 mkAttrs' ''JSString [ ("class_", "className")
                     , ("type_", "type")
+                    , ("pattern_", "pattern")
                     ]
 
-mkAttrs ''Int [ "key", "width", "height" ]
+mkAttrs ''Int [ "key", "width", "height", "colspan", "rowspan", "maxlength" ]
